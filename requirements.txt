@@ -8,3 +8,4 @@ mediapipe
 python-dotenv
 google.generativeai
 playsound==1.2.2
+PyGObject
