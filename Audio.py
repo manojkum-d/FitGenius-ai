@@ -1,5 +1,5 @@
 import os
-import playsound
+from playsound import playsound
 import speech_recognition as sr
 from gtts import gTTS
 import streamlit as st
@@ -27,7 +27,7 @@ def text_to_speech(text):
     tts.save(filename)
 
     # Play the generated audio using playsound
-    playsound.playsound(filename)
+    playsound(filename)
 
     # Remove the generated audio file
     os.remove(filename)
