@@ -1,4 +1,3 @@
-
 numpy
 streamlit
 playsound
@@ -7,4 +6,4 @@ gtts
 opencv-python
 mediapipe
 python-dotenv
-pkg-config
+
