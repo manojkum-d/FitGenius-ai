@@ -7,4 +7,4 @@ mediapipe
 python-dotenv
 google.generativeai
 playsound==1.2.2
-gstreamer-1.0
+
