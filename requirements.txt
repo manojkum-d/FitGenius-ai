@@ -1,6 +1,5 @@
 numpy
 streamlit
-playsound
 SpeechRecognition
 gtts
 opencv-python-headless
