@@ -3,8 +3,8 @@ streamlit
 playsound
 SpeechRecognition
 gtts
-opencv-python
+opencv-python-headless
 mediapipe
 python-dotenv
-libgl1
+
 
