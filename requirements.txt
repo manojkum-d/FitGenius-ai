@@ -6,4 +6,5 @@ gtts
 opencv-python
 mediapipe
 python-dotenv
+libgl1
 
