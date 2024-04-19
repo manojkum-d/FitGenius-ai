@@ -1,5 +1,5 @@
 import streamlit as st
-from Audio import text_to_speech, get_audio
+# from Audio import text_to_speech, get_audio
 import cv2
 import tempfile
 import ExerciseAiTrainer as exercise
@@ -126,6 +126,7 @@ def main():
                     st.markdown(response)
                     st.session_state.messages.append({"role": "assistant", "content": response})
 
+
     elif options == 'Personal Trainer':
         st.write("""
             ## Your AI Personal Trainer
@@ -198,7 +199,7 @@ def main():
 
             # Define a button for start the analysis (pose estimation) on the webcam
             st.write(' ## Click button to activate AI Trainer')
-            st.write("Say 'Ready' to get started")
+            # st.write("Say 'Ready' to get started")
             button = st.button('Activate AI Trainer')
 
             # Visualize video that explains the correct forms for the exercises
@@ -220,42 +221,34 @@ def main():
 
             # if the button is selected, after a Vocal command, start the webcam analysis (pose estimation)
             if button:
-                # Ask user if want to start the training (using text to speech)
-                text_to_speech('Are you Ready to start Training?')
-                # get the audio of the user
-                text = get_audio()
+                st.write(str('READY'))
+                ready = True
 
-                # if user is ready (say 'yes' or 'ready') then start the webcam analysis
-                if 'ready' or 'yes' in text:
+                # for each type of exercise call the method that analyzes that exercise
+                if exercise_general == 'Bicept Curl':
+                    while ready:
+                        cap = cv2.VideoCapture(0)
+                        exer = exercise.Exercise()
+                        exer.bicept_curl(cap)
 
-                    text_to_speech("Ok, Let's get started")
-                    st.write(str('READY'))
-                    ready = True
+                elif exercise_general == 'Push Up':
+                    while ready:
+                        cap = cv2.VideoCapture(0)
+                        exer = exercise.Exercise()
+                        exer.push_up(cap)
 
-                    # for each type of exercise call the method that analyzes that exercise
-                    if exercise_general == 'Bicept Curl':
-                        while ready:
-                            cap = cv2.VideoCapture(0)
-                            exer = exercise.Exercise()
-                            exer.bicept_curl(cap)
+                elif exercise_general == 'Squat':
+                    while ready:
+                        cap = cv2.VideoCapture(0)
+                        exer = exercise.Exercise()
+                        exer.squat(cap)
 
-                    elif exercise_general == 'Push Up':
-                        while ready:
-                            cap = cv2.VideoCapture(0)
-                            exer = exercise.Exercise()
-                            exer.push_up(cap)
+                elif exercise_general == 'Shoulder Press':
+                    while ready:
+                        cap = cv2.VideoCapture(0)
+                        exer = exercise.Exercise()
+                        exer.shoulder_press(cap)
 
-                    elif exercise_general == 'Squat':
-                        while ready:
-                            cap = cv2.VideoCapture(0)
-                            exer = exercise.Exercise()
-                            exer.squat(cap)
-
-                    elif exercise_general == 'Shoulder Press':
-                        while ready:
-                            cap = cv2.VideoCapture(0)
-                            exer = exercise.Exercise()
-                            exer.shoulder_press(cap)
 
     elif options == 'Ai vision for dietory':
         st.header("Gemini Health App")
