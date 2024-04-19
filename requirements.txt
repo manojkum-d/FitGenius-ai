@@ -8,4 +8,4 @@ opencv-python
 mediapipe
 python-dotenv
 pygobject
-
+pkg-config
