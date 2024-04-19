@@ -6,5 +6,5 @@ gtts
 opencv-python-headless
 mediapipe
 python-dotenv
-
+google.generativeai
 
