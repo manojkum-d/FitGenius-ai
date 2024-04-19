@@ -7,6 +7,6 @@ opencv-python-headless
 mediapipe
 python-dotenv
 google.generativeai
-pygobject
+PyGObject
 playsound
 
