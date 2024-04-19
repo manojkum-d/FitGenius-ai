@@ -1,0 +1,10 @@
+
+numpy
+streamlit
+playsound
+SpeechRecognition
+gtts
+opencv-python
+mediapipe
+python-dotenv
+
