@@ -8,4 +8,4 @@ mediapipe
 python-dotenv
 google.generativeai
 playsound
-PyObjC
+
