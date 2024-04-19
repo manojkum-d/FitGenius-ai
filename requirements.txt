@@ -7,4 +7,5 @@ gtts
 opencv-python
 mediapipe
 python-dotenv
+pygobject
 
