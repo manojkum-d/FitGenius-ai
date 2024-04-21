@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 8501
 
 # Run the Streamlit app when the container launches
-CMD ["streamlit", "run", "app.py"]
+CMD ["streamlit", "run", "main.py"]
 
 RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6
 
