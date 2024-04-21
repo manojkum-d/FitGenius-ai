@@ -7,7 +7,7 @@ RUN pip install -r requirements.txt
 # Make port 80 available to the world outside this container
 EXPOSE 8081
 
-CMD ["python", "main.py"]
+CMD ["streamlit","python", "main.py"]
 
 RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6
 
