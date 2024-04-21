@@ -2,7 +2,6 @@
 FROM python:3.10-slim
 
 # Install any needed dependencies specified in requirements.txt
-RUN pip install -r requirements.txt
 
 # Make port 80 available to the world outside this container
 EXPOSE 8081
