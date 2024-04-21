@@ -13,11 +13,11 @@ RUN pip install -r requirements.txt
 
 EXPOSE 80
 
-RUN mkdir ~/ .streamlit
+# RUN mkdir ~/ .streamlit
 
-RUN cp config.toml ~/ .streamlit/config.toml
+# RUN cp config.toml ~/ .streamlit/config.toml
 
-RUN cp credentials.toml ~/ .streamlit/credentials.toml
+# RUN cp credentials.toml ~/ .streamlit/credentials.toml
 
 RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6
 
