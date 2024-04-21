@@ -2,7 +2,7 @@ numpy
 streamlit
 SpeechRecognition
 gtts
-opencv-python-headless
+opencv-python-headless -y 
 mediapipe
 python-dotenv
 google.generativeai
