@@ -7,17 +7,17 @@ from dotenv import load_dotenv
 import os
 import google.generativeai as genai
 from PIL import Image
+import io
+
 load_dotenv()
 
-
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-
 
 model = genai.GenerativeModel('gemini-pro')
 chat = model.start_chat(history=[])
 
 def get_gemini_response(question, gender, age, weight, height, activity_level, goals, dietary_restrictions, bp, sugar, food_allergy):
-    text = f'Act as a fitness trainer and give a short but to the point answer according to the given information that I am {age} years old {gender}, my weight is {weight} kg, my height is {height}cm, i am {activity_level}, my goal is to {goals}, and i am {dietary_restrictions}. My blood pressure is {bp}, my sugar level is {sugar}, and I have food allergies: {food_allergy}. My question is that {question}'
+    text = f'Act as a fitness trainer and give a short but to the point answer according to the given information that I am {age} years old {gender}, my weight is {weight} kg, my height is {height}cm, I am {activity_level}, my goal is to {goals}, and I am {dietary_restrictions}. My blood pressure is {bp}, my sugar level is {sugar}, and I have food allergies: {food_allergy}. My question is that {question}'
     response = chat.send_message(text, stream=True)
     return response
 
@@ -44,12 +44,13 @@ def get_gemini_health_response(input, image, gender, age, weight, height, activi
     It is essential to strictly follow these guidelines for accurate analysis. Failure to do so may result in incorrect conclusions. Take into account all provided information, particularly blood pressure, sugar levels, and food allergies, to determine whether the individual can safely consume the identified food items.
     STRICT ADHERENCE TO THE INSTRUCTIONS IS REQUIRED.    
     """
-    model = genai.GenerativeModel('gemini-pro-vision')
+    model = genai.GenerativeModel('gemini-1.5-pro')
     response = model.generate_content([input, image[0], input_prompt])
     return response.text
 
 def input_image_setup(uploaded_file):
     if uploaded_file is not None:
+        # Handle binary buffer without automatic decoding
         bytes_data = uploaded_file.getvalue()
         image_parts = [{"mime_type": uploaded_file.type, "data": bytes_data}]
         return image_parts
@@ -62,9 +63,7 @@ def main():
         ## Welcome to your personal AI trainer
         """)
 
-    # Define sidebar options for selecting functionality
-    # options = st.sidebar.radio('Select Functionality', ('AI Assistant', 'Personal Trainer', 'Gemini Health App'))
-    options = st.sidebar.radio('Select Functionality', ('AI Assistant ChatBot' ,'Personal Trainer', 'Ai vision for dietory'))
+    options = st.sidebar.radio('Select Functionality', ('AI Assistant ChatBot', 'Personal Trainer', 'Ai vision for dietory'))
 
     with st.sidebar:
         if options != 'Personal Trainer':
@@ -131,131 +130,110 @@ def main():
             ## This Feature is not in the deployed version....
             """)
 
-        # # Define Options for selecting video or webcam
-        # options = st.sidebar.selectbox('Select Option', ('Video', 'WebCam'))
+        # Define Options for selecting video or webcam
+        options = st.sidebar.selectbox('Select Option', ('Video', 'WebCam'))
 
-        # # Define Operations if Video Option is selected
-        # if options == 'Video':
+        # Define Operations if Video Option is selected
+        if options == 'Video':
 
-        #     st.write('## Import your video and select the correct type of Exercise')
+            st.write('## Import your video and select the correct type of Exercise')
 
-        #     st.set_option('deprecation.showfileUploaderEncoding', False)
+            # st.set_option('deprecation.showfileUploaderEncoding', False)
 
-        #     # User can select different types of exercise
-        #     exercise_options = st.sidebar.selectbox(
-        #         'Select Exercise', ('Bicept Curl', 'Push Up', 'Squat', 'Shoulder Press')
-        #     )
+            # User can select different types of exercise
+            exercise_options = st.sidebar.selectbox(
+                'Select Exercise', ('Bicept Curl', 'Push Up', 'Squat', 'Shoulder Press')
+            )
 
-        #     st.sidebar.markdown('-------')
+            st.sidebar.markdown('-------')
 
-        #     # User can upload a video:
-        #     video_file_buffer = st.sidebar.file_uploader("Upload a video", type=["mp4", "mov", 'avi', 'asf', 'm4v'])
-        #     tfflie = tempfile.NamedTemporaryFile(delete=False)
+            # User can upload a video:
+            video_file_buffer = st.sidebar.file_uploader("Upload a video", type=["mp4", "mov", 'avi', 'asf', 'm4v'])
+            tfflie = tempfile.NamedTemporaryFile(delete=False)
 
-        #     # if no video uploaded then use a demo
-        #     if not video_file_buffer:
-        #         DEMO_VIDEO = 'demo.mp4'
-        #         cap = cv2.VideoCapture(DEMO_VIDEO)
-        #         tfflie.name = DEMO_VIDEO
+            # if no video uploaded then use a demo
+            if not video_file_buffer:
+                DEMO_VIDEO = 'demo.mp4'
+                cap = cv2.VideoCapture(DEMO_VIDEO)
+                tfflie.name = DEMO_VIDEO
 
-        #     # if video is uploaded then analyze the video
-        #     else:
-        #         tfflie.write(video_file_buffer.read())
-        #         cap = cv2.VideoCapture(tfflie.name)
+            # if video is uploaded then analyze the video
+            else:
+                tfflie.write(video_file_buffer.read())
+                cap = cv2.VideoCapture(tfflie.name)
 
-        #     # Visualize Video before analysis
-        #     st.sidebar.text('Input Video')
-        #     st.sidebar.video(tfflie.name)
+            # Visualize Video before analysis
+            st.sidebar.text('Input Video')
+            st.sidebar.video(tfflie.name)
 
-        #     st.markdown('## Input Video')
-        #     st.video(tfflie.name)
+            st.markdown('## Input Video')
+            st.video(tfflie.name)
 
-        #     # Visualize Video after analysis (analysis based on the selected exercise)
-        #     st.markdown(' ## Output Video')
-        #     if exercise_options == 'Bicept Curl':
-        #         exer = exercise.Exercise()
-        #         exer.bicept_curl(cap)
+            # Visualize Video after analysis (analysis based on the selected exercise)
+            st.markdown(' ## Output Video')
+            if exercise_options == 'Bicept Curl':
+                exer = exercise.Exercise()
+                exer.bicept_curl(cap)
 
-        #     elif exercise_options == 'Push Up':
-        #         exer = exercise.Exercise()
-        #         exer.push_up(cap)
+            elif exercise_options == 'Push Up':
+                exer = exercise.Exercise()
+                exer.push_up(cap)
 
-        #     elif exercise_options == 'Squat':
-        #         exer = exercise.Exercise()
-        #         exer.squat(cap)
+            elif exercise_options == 'Squat':
+                exer = exercise.Exercise()
+                exer.squat(cap)
 
-        #     elif exercise_options == 'Shoulder Press':
-        #         exer = exercise.Exercise()
-        #         exer.shoulder_press(cap)
+            elif exercise_options == 'Shoulder Press':
+                exer = exercise.Exercise()
+                exer.shoulder_press(cap)
 
-        # # Define Operation if webcam option is selected
-        # elif options == 'WebCam':
+        # Define Operation if webcam option is selected
+        elif options == 'WebCam':
 
-        #     # User can select different exercises
-        #     exercise_general = st.sidebar.selectbox(
-        #         'Select Exercise', ('Bicept Curl', 'Push Up', 'Squat', 'Shoulder Press')
-        #     )
+            # User can select different exercises
+            exercise_general = st.sidebar.selectbox(
+                'Select Exercise', ('Bicept Curl', 'Push Up', 'Squat', 'Shoulder Press')
+            )
 
-        #     # Define a button for start the analysis (pose estimation) on the webcam
-        #     st.write(' ## Click button to activate AI Trainer')
-        #     st.write("Say 'Ready' to get started")
-        #     button = st.button('Activate AI Trainer')
+            # Define a button for start the analysis (pose estimation) on the webcam
+            st.write(' ## Click button to activate AI Trainer')
+            st.write("Say 'Ready' to get started")
+            button = st.button('Activate AI Trainer')
 
-        #     # Visualize video that explains the correct forms for the exercises
-        #     if exercise_general == 'Bicept Curl':
-        #         st.write('## Bicept Curl Execution')
-        #         st.video('curl_form.mp4')
+            # Visualize video that explains the correct forms for the exercises
+            if exercise_general == 'Bicept Curl':
+                st.write('## Bicept Curl Execution')
+                st.video('curl_form.mp4')
 
-        #     elif exercise_general == 'Push Up':
-        #         st.write('## Push Up Execution')
-        #         st.video('push_up_form.mp4')
+            elif exercise_general == 'Push Up':
+                st.write('## Push Up Execution')
+                st.video('pushup_form.mp4')
 
-        #     elif exercise_general == 'Squat':
-        #         st.write('## Squat Execution')
-        #         st.video('squat_form.mp4')
+            elif exercise_general == 'Squat':
+                st.write('## Squat Execution')
+                st.video('squat_form.mp4')
 
-        #     elif exercise_general == 'Shoulder Press':
-        #         st.write('## Shoulder Press Execution')
-        #         st.video('shoulder_press_form.mp4')
+            elif exercise_general == 'Shoulder Press':
+                st.write('## Shoulder Press Execution')
+                st.video('shoulder_press_form.mp4')
 
-        #     # if the button is selected, after a Vocal command, start the webcam analysis (pose estimation)
-        #     if button:
-        #         # Ask user if want to start the training (using text to speech)
-        #         text_to_speech('Are you Ready to start Training?')
-        #         # get the audio of the user
-        #         text = get_audio()
+            # If button clicked then start the analysis
+            if button:
 
-        #         # if user is ready (say 'yes' or 'ready') then start the webcam analysis
-        #         if 'ready' or 'yes' in text:
+                # initialize object that contains the pose estimation methods
+                run = exercise.Exercise()
 
-        #             text_to_speech("Ok, Let's get started")
-        #             st.write(str('READY'))
-        #             ready = True
+                if exercise_general == 'Bicept Curl':
+                    run.bicept_curl_video()
 
-        #             # for each type of exercise call the method that analyzes that exercise
-        #             if exercise_general == 'Bicept Curl':
-        #                 while ready:
-        #                     cap = cv2.VideoCapture(0)
-        #                     exer = exercise.Exercise()
-        #                     exer.bicept_curl(cap)
+                elif exercise_general == 'Push Up':
+                    run.push_up_video()
 
-        #             elif exercise_general == 'Push Up':
-        #                 while ready:
-        #                     cap = cv2.VideoCapture(0)
-        #                     exer = exercise.Exercise()
-        #                     exer.push_up(cap)
+                elif exercise_general == 'Squat':
+                    run.squat_video()
 
-        #             elif exercise_general == 'Squat':
-        #                 while ready:
-        #                     cap = cv2.VideoCapture(0)
-        #                     exer = exercise.Exercise()
-        #                     exer.squat(cap)
-
-        #             elif exercise_general == 'Shoulder Press':
-        #                 while ready:
-        #                     cap = cv2.VideoCapture(0)
-        #                     exer = exercise.Exercise()
-        #                     exer.shoulder_press(cap)
+                elif exercise_general == 'Shoulder Press':
+                    run.shoulder_press_video()
 
     elif options == 'Ai vision for dietory':
         st.header("Gemini Health App")
@@ -263,7 +241,8 @@ def main():
         uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
         image = ""
         if uploaded_file is not None:
-            image = Image.open(uploaded_file)
+            # Use the uploaded image directly
+            image = Image.open(io.BytesIO(uploaded_file.read()))
             st.image(image, caption="Uploaded Image.", use_column_width=True)
 
         submit = st.button("Tell me the total calories")
@@ -273,7 +252,6 @@ def main():
             response = get_gemini_health_response(input, image_data, gender, age, weight, height, activity_level, goals, dietary_restrictions, bp, sugar, food_allergy)
             st.subheader("The Response is")
             st.write(response)
-
 
 if __name__ == '__main__':
     main()
